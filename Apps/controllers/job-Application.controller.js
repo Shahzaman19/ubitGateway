@@ -1,7 +1,7 @@
 const {JobApplication} =  require('../model/job-Application')
 
 // Submit a job application
-exports.post = async (req,res ) => {
+exports.post = async (req,res,next ) => {
 
     try {
       const newJobApplication = new JobApplication(req.body);
@@ -11,9 +11,9 @@ exports.post = async (req,res ) => {
       }
     
       const savedJobApplication = await newJobApplication.save();
-      res.status(201).json(savedJobApplication);
+      return res.status(201).json(savedJobApplication);
     } catch (error) {
-      res.status(500).json({ error: error.message });
+      return next(error);
     }
     
 
@@ -21,15 +21,15 @@ exports.post = async (req,res ) => {
 
 
 // Count Users Applied for a Job
-exports.getJobApplicationCount = async (req, res) => {
+exports.getJobApplicationCount = async (req, res,next) => {
   try {
     const jobId = req.query.jobId;
 
     const appliedUsersCount = await JobApplication.countDocuments({ jobId: jobId });
 
-    res.json({ appliedUsersCount });
+    return res.json({ appliedUsersCount });
   } catch (error) {
-    res.status(500).json({ error: error.message });
+    return next(error);
   }
 };
 

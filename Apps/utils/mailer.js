@@ -23,7 +23,7 @@ const transporter = nodemailer.createTransport({
     } 
     catch 
     (error) {
-        res.json(error.message)
+        return res.json(error.message)
     }
   
 

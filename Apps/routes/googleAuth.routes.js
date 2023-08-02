@@ -23,12 +23,16 @@ router.get(
 );
 
 router.get("/failure", (req, res) => {
-  res.json("something went wrong..");
+  return res.json("something went wrong..");
 });
 
-router.get("/protected", [isLoggedIn], async (req, res) => {
-  const user = await User.find()
-  res.json(user)
+router.get("/protected", [isLoggedIn], async (req, res,next) => {
+  try {
+    const user = await User.find()
+  return res.json(user)
+  } catch (error) {
+    return next(error)
+  }
 });
 
 router.get("/logout", (req, res, next) => {
@@ -40,7 +44,7 @@ router.get("/logout", (req, res, next) => {
       if (err) {
         return next(err);
       }
-      res.json("Goodbye");
+      return res.json("Goodbye");
     });
   });
 });

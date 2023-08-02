@@ -19,16 +19,16 @@ router.get(
 );
 
 router.get("/failure", (req, res) => {
-  res.json({ error: "Something went wrong" });
+  return res.json({ error: "Something went wrong" });
 });
 
-router.get("/dashboard", [isLoggedIn], async (req, res) => {
+router.get("/dashboard", [isLoggedIn], async (req, res,next) => {
   try {
     const users = await User.find();
 
-    res.json(users);
+    return res.json(users);
   } catch (error) {
-    res.json({ error: error.message });
+    return next(error);
   }
 });
 
@@ -41,7 +41,7 @@ router.get("/logout", (req, res,next) => {
       if (err) {
         return next(err);
       }
-      res.json("Goodbye");
+      return res.json("Goodbye");
     });
   });
 });

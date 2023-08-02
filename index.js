@@ -1,15 +1,16 @@
 /* eslint-disable no-undef */
+require("dotenv").config();
 const passport = require("passport");
 const express = require("express");
 const http = require("http");
 const cors = require("cors");
-require("dotenv").config();
 const app = express();
 const server = http.createServer(app);
 const session = require("express-session");
 const MongoDBStore = require("connect-mongodb-session")(session);
 const path = require("path");
 const morgan = require("morgan");
+const helmet = require('helmet')
 const port = process.env.PORT || 4000;
 
 // Set up MongoDB session store
@@ -24,6 +25,7 @@ store.on("error", (error) => {
 
 app.use(morgan("dev"));
 app.use(express.json());
+app.use(helmet())
 
 app.use(
   session({
@@ -52,6 +54,14 @@ require("./Apps/config/db");
 
 // ROUTES
 app.use("/api", require("./Apps/routes/app.routes"));
+
+//ERRORS
+app.use((err, req, res, next) => {
+  res.status(err.status || 500);
+  return res.json({
+    error: err.message,
+  });
+});
 
 // PORT
 const myServer = server.listen(port, console.log(`Connected to port ${port}`));
