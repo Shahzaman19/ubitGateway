@@ -48,8 +48,9 @@ exports.create = async (req, res,next) => {
 
   try {
     await generateOTP(email);
-
-    req.session.otpCode = generateOTP.otpCode;
+    const otpCode = await generateOTP(email); 
+    req.session.otpCode = otpCode
+    console.log("Session OTP-------------------->",req.session.otpCode);
     req.session.userDetails = {
       name,
       email,
@@ -156,10 +157,14 @@ exports.resetPassword = async (req, res,next) => {
 
 //VERIFY OTP AND  CREATE STORE USER IN DB
 exports.verifyOtp = async (req, res,next) => {
-  const userOtp = req.body.otp;
+  const userOtp =  req.body.userotp;
 
   const storedOtp = req.session.otpCode;
   const userDetails = req.session.userDetails;
+  console.log('storedOtp------------------------->', storedOtp)
+  console.log('userOtp------------------------->', userOtp)
+
+  // console.log('userDetails------------------------->', userDetails)
 
   if (userOtp === storedOtp) {
     try {
@@ -341,10 +346,13 @@ exports.personalDetails = async (req, res,next) => {
     };
 
     if (req.file) {
-      if (req.file.mimetype === "application/pdf") {
+      if (
+        req.file.mimetype === "image/jpeg" ||
+        req.file.mimetype === "image/png"
+      ) {
         newPersonalDetails.picture = req.file.filename;
       } else {
-        throw new Error("Only PDF files are accepted for the resume");
+        throw new Error("Only JPEG and PNG images are accepted");
       }
     }
 
@@ -391,7 +399,7 @@ exports.updatePersonalDetails = async (req, res,next) => {
 exports.resumeDetails = async (req, res,next) => {
   try {
     const id = req.user.userId;
-    const { portfolio } = req.body;
+    const { portfolio} = req.body;
 
     // Find the user by userId
     const user = await User.findById(id);
@@ -418,7 +426,7 @@ exports.resumeDetails = async (req, res,next) => {
     // Save the updated user document
     await user.save();
 
-    return res.status(201).json({ message: "Resume Details added successfully" });
+    return res.status(201).json({ user : newResumeDetails,message: "Resume Details added successfully" });
   } catch (error) {
     return next(error);
   }

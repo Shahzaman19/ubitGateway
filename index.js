@@ -56,10 +56,13 @@ require("./Apps/config/db");
 app.use("/api", require("./Apps/routes/app.routes"));
 
 //ERRORS
+
+
 app.use((err, req, res, next) => {
   res.status(err.status || 500);
   return res.json({
-    error: err.message,
+    message: err.message,
+    error: err,
   });
 });
 
