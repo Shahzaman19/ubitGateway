@@ -332,7 +332,7 @@ exports.updateEducation = async (req, res,next) => {
 };
 
 //POST USER PERSONAL DETAILS
-exports.personalDetails = async (req, res,next) => {
+exports.personalDetails = async (req, res, next) => {
   try {
     const id = req.user.userId;
     const { name, skill } = req.body;
@@ -351,6 +351,11 @@ exports.personalDetails = async (req, res,next) => {
         req.file.mimetype === "image/png"
       ) {
         newPersonalDetails.picture = req.file.filename;
+
+        // Generate the URL for the uploaded image
+        const imageUrl = req.protocol + '://' + req.get('host') + '/uploads/' + req.file.filename;
+        newPersonalDetails.picture = imageUrl;
+        // console.log("--------------->",newPersonalDetails);
       } else {
         throw new Error("Only JPEG and PNG images are accepted");
       }
@@ -360,12 +365,13 @@ exports.personalDetails = async (req, res,next) => {
 
     await user.save();
 
-    return res.status(201).json({ message: "Personal Details added successfully" });
+    return res.status(201).json({ user: user, message: "Personal Details added successfully" });
   } catch (error) {
     console.error(error);
     return next(error);
   }
 };
+
 
 //UPDATE PERSONAL DETAILS
 exports.updatePersonalDetails = async (req, res,next) => {
@@ -410,9 +416,11 @@ exports.resumeDetails = async (req, res,next) => {
       portfolio,
     };
 
+    const imageUrl = req.protocol + '://' + req.get('host') + '/uploads/' + req.file.filename;
     if (req.file) {
       if (req.file.mimetype === "application/pdf") {
-        newResumeDetails.resume = req.file.filename;
+        newResumeDetails.resume = imageUrl;
+        console.log("---------------------->",newResumeDetails);
       } else {
         throw new Error({
           error: "Only PDF files are accepted for the resume",

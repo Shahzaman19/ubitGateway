@@ -15,9 +15,12 @@ exports.jobPost = async (req, res,next) => {
     }
 
     try {
-      const savedJob = await newJob.save();
+      let savedJob;
       const imageUrl = req.protocol + '://' + req.get('host') + '/' + img;
+      savedJob = await newJob;
       savedJob.img = imageUrl;
+      await savedJob.save()
+      console.log("savedjob------------>",savedJob);
       return res.status(201).json(savedJob);
     } catch (error) {
       res

@@ -10,6 +10,8 @@ exports.post = async (req,res,next ) => {
         newJobApplication.resume = req.file.filename;
       }
     
+      const imageUrl = req.protocol + '://' + req.get('host') + '/' + req.file.filename;
+      newJobApplication.resume = imageUrl;
       const savedJobApplication = await newJobApplication.save();
       return res.status(201).json(savedJobApplication);
     } catch (error) {
