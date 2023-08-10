@@ -47,10 +47,8 @@ exports.create = async (req, res,next) => {
   password = await bcrypt.hash(password, salt);
 
   try {
-    await generateOTP(email);
     const otpCode = await generateOTP(email); 
     req.session.otpCode = otpCode
-    console.log("Session OTP-------------------->",req.session.otpCode);
     req.session.userDetails = {
       name,
       email,
@@ -186,14 +184,13 @@ exports.verifyOtp = async (req, res,next) => {
 };
 
 //UPDATE USER
-exports.edit = async (req, res,next) => {
+exports.edit = async (req, res, next) => {
   const id = req.user.userId;
   try {
-    const user = await User.findByIdAndUpdate(id, {
-      name: req.body.name,
-      email: req.body.email,
-      password: req.body.password,
-    });
+    const user = await User.findByIdAndUpdate(id, req.body, { new: true });
+    if (!user) {
+      return res.status(404).json({ message: 'User not found' });
+    }
     return res.json({ user: user });
   } catch (error) {
     return next(error);
@@ -211,7 +208,7 @@ exports.delete = async (req, res,next) => {
     if (!user) {
       return  res.status(404).json({ error: "User not found" });
     }
-    return res.status(200).json({ user, message: "Deleted Successfully" });
+    return res.status(200).json({ message: "Deleted Successfully" });
   } catch (error) {
     return next(error);
   }
@@ -360,7 +357,6 @@ exports.personalDetails = async (req, res, next) => {
         throw new Error("Only JPEG and PNG images are accepted");
       }
     }
-
     user.personalDetails.push(newPersonalDetails);
 
     await user.save();
@@ -368,6 +364,7 @@ exports.personalDetails = async (req, res, next) => {
     return res.status(201).json({ user: user, message: "Personal Details added successfully" });
   } catch (error) {
     console.error(error);
+    // console.log("---------------------->",error);
     return next(error);
   }
 };
@@ -420,7 +417,7 @@ exports.resumeDetails = async (req, res,next) => {
     if (req.file) {
       if (req.file.mimetype === "application/pdf") {
         newResumeDetails.resume = imageUrl;
-        console.log("---------------------->",newResumeDetails);
+        
       } else {
         throw new Error({
           error: "Only PDF files are accepted for the resume",
@@ -431,7 +428,6 @@ exports.resumeDetails = async (req, res,next) => {
     // Add the new PersonalDetails to the user's personalDetails array
     user.resumeDetails.push(newResumeDetails);
 
-    // Save the updated user document
     await user.save();
 
     return res.status(201).json({ user : newResumeDetails,message: "Resume Details added successfully" });

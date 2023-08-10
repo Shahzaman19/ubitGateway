@@ -59,6 +59,7 @@ app.use("/api", require("./Apps/routes/app.routes"));
 
 
 app.use((err, req, res, next) => {
+  console.log("Error------------>",err);
   res.status(err.status || 500);
   return res.json({
     message: err.message,
