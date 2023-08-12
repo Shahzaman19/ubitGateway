@@ -261,7 +261,7 @@ exports.updateExperience = async (req, res,next) => {
   const { position, company, startDate, endDate } = req.body;
 
   try {
-    const user = await User.findOneAndUpdate(
+     await User.findOneAndUpdate(
       { _id: id, "experience.position": { $exists: true } },
       {
         $set: {
@@ -274,7 +274,7 @@ exports.updateExperience = async (req, res,next) => {
       { new: true }
     );
 
-    return res.json(user);
+    return res.json({message : "Experience updated successfully"});
   } catch (error) {
     return next(error);
   }
@@ -322,7 +322,7 @@ exports.updateEducation = async (req, res,next) => {
       { new: true }
     );
 
-    return res.json(user);
+    return res.json({message : "Education updated successfully"});
   } catch (error) {
     return next(error);
   }
@@ -392,7 +392,7 @@ exports.updatePersonalDetails = async (req, res,next) => {
       return  res.status(404).json({ error: "User not found" });
     }
 
-    return res.json(user);
+    return res.json({message : "User updated successfuly"});
   } catch (error) {
     return next(error);
   }
@@ -463,7 +463,7 @@ exports.updateResumeDetails = async (req, res,next) => {
       return  res.status(404).json({ error: "User not found" });
     }
 
-    return res.json(user);
+    return res.json({message : "Resume details updated successfully"});
   } catch (error) {
     return next(error);
   }

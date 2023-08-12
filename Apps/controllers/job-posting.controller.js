@@ -20,8 +20,8 @@ exports.jobPost = async (req, res,next) => {
       // const port = '3000'
       // const imageUrl = req.protocol + '://' + localIpAddress  + '/' + img;
       const imageUrl = img;
-      console.log("HOST-------------------->",req.get('host'));
-      console.log("IMG------------->",img);
+      // console.log("HOST-------------------->",req.get('host'));
+      // console.log("IMG------------->",img);
 
       // const imageUrl = req.file.filename;
 
