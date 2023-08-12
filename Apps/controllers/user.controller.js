@@ -456,37 +456,72 @@ exports.resumeDetails = async (req, res,next) => {
 };
 
 //UPDATE RESUME DETAILS
-exports.updateResumeDetails = async (req, res,next) => {
+// exports.updateResumeDetails = async (req, res,next) => {
+//   const id = req.user.userId;
+//   // const { portfolio } = req.body;
+//   console.log("REQ BODY ----------->",req.files);
+//   try {
+//     if (req.file && req.file.mimetype !== "application/pdf") {
+//       return res
+//         .status(400)
+//         .json({ error: "Only PDF files are accepted for the picture" });
+//     }
+
+//     const user = await User.findOneAndUpdate(
+//       { _id: id, "resumeDetails.portfolio": { $exists: true } },
+//       {
+//         $set: {
+//           "resumeDetails.$.portfolio": req.file ? req.file.filename : null,
+//           "resumeDetails.$.resume": req.file ? req.file.filename : null,
+//         },
+//       },
+//       { new: true }
+//     );
+
+//     if (!user) {
+//       return  res.status(404).json({ error: "User not found" });
+//     }
+//     return res.json({message : "Resume details updated successfully"});
+//   } catch (error) {
+//     return next(error);
+//   }
+// };
+
+exports.updateResumeDetails = async (req, res, next) => {
   const id = req.user.userId;
-  const { portfolio } = req.body;
+  // const { portfolio } = req.body;
 
   try {
-    if (req.file && req.file.mimetype !== "application/pdf") {
+    if (!req.files || !req.files.resume || req.files.resume[0].mimetype !== "application/pdf") {
       return res
         .status(400)
-        .json({ error: "Only PDF files are accepted for the picture" });
+        .json({ error: "Please upload a PDF file for the resume" });
     }
 
     const user = await User.findOneAndUpdate(
-      { _id: id, "resumeDetails.portfolio": { $exists: true } },
+      { _id: id },
       {
         $set: {
-          "resumeDetails.$.portfolio": portfolio,
-          "resumeDetails.$.resume": req.file ? req.file.filename : null,
+          "resumeDetails.0.portfolio": req.files.portfolio[0].filename,
+          "resumeDetails.0.resume": req.files.resume[0].filename
         },
       },
       { new: true }
     );
 
     if (!user) {
-      return  res.status(404).json({ error: "User not found" });
+      return res.status(404).json({ error: "User not found" });
     }
 
-    return res.json({message : "Resume details updated successfully"});
+    return res.json({ message: "Resume details updated successfully" });
   } catch (error) {
     return next(error);
   }
 };
+
+
+
+
 
 //USER LIMITED DETAILS
 exports.getLimitedUserDetails = async (req, res,next) => {

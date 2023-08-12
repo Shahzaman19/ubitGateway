@@ -24,7 +24,10 @@ router.put('/updateEducation' , [authMiddleware] ,  controller.updateEducation)
 router.post('/personalDetails' , [authMiddleware] ,upload.single('picture'),  controller.personalDetails)
 router.put('/updatePersonalDetails' , [authMiddleware] ,upload.single('picture'),  controller.updatePersonalDetails)
 router.post('/resumeDetails' , [authMiddleware] ,upload.single('resume'), controller.resumeDetails)
-router.put('/updateResumeDetails' , [authMiddleware] ,upload.single('resume'),  controller.updateResumeDetails)
+router.put('/updateResumeDetails' , [authMiddleware] ,upload.fields([
+    { name: 'resume', maxCount: 1 },
+    { name: 'portfolio', maxCount: 5 }
+  ]),  controller.updateResumeDetails)
 router.get('/limitedDetails' , [authMiddleware] ,upload.single('resume'),  controller.getLimitedUserDetails)
 
 
