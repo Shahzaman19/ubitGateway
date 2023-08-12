@@ -9,10 +9,7 @@ exports.post = async (req,res,next ) => {
       if (req.file) {
         newJobApplication.resume = req.file.filename;
       }
-    
-      // const imageUrl = req.protocol + '://' + req.get('host') + '/' + req.file.filename;
-      const imageUrl =  req.file.filename;
-
+      const imageUrl = 'uploads/' + req.file.filename;
       newJobApplication.resume = imageUrl;
       const savedJobApplication = await newJobApplication.save();
       return res.status(201).json(savedJobApplication);

@@ -350,7 +350,7 @@ exports.personalDetails = async (req, res, next) => {
         newPersonalDetails.picture = req.file.filename;
 
         // Generate the URL for the uploaded image
-        const imageUrl = req.protocol + '://' + req.get('host') + '/uploads/' + req.file.filename;
+        const imageUrl = 'uploads/' + req.file.filename;
         newPersonalDetails.picture = imageUrl;
         // console.log("--------------->",newPersonalDetails);
       } else {
@@ -413,7 +413,7 @@ exports.resumeDetails = async (req, res,next) => {
       portfolio,
     };
 
-    const imageUrl = req.protocol + '://' + req.get('host') + '/uploads/' + req.file.filename;
+    const imageUrl = 'uploads/' + req.file.filename;
     if (req.file) {
       if (req.file.mimetype === "application/pdf") {
         newResumeDetails.resume = imageUrl;

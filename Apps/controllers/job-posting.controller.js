@@ -16,15 +16,7 @@ exports.jobPost = async (req, res,next) => {
 
     try {
       let savedJob;
-      // const localIpAddress = '127.0.0.1:27017'; 
-      // const port = '3000'
-      // const imageUrl = req.protocol + '://' + localIpAddress  + '/' + img;
       const imageUrl = img;
-      // console.log("HOST-------------------->",req.get('host'));
-      // console.log("IMG------------->",img);
-
-      // const imageUrl = req.file.filename;
-
       savedJob = await newJob;
       savedJob.img = imageUrl;
       await savedJob.save()
@@ -83,8 +75,8 @@ exports.deleteJobPosts = async (req, res,next) => {
 //Get filtered Jobs
 exports.getFilteredJobs = async (req, res,next) => {
   try {
-    const jobType = req.query.jobType; 
-    const jobs = await Job.find({ jobType: jobType }).sort({ postedAt: -1 });
+    const jobType = req.query;
+    const jobs = await Job.find(jobType).sort({ postedAt: -1 });
     return res.status(200).json(jobs);
   } catch (error) {
     return next(error);
