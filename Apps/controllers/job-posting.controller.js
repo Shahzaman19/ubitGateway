@@ -16,7 +16,15 @@ exports.jobPost = async (req, res,next) => {
 
     try {
       let savedJob;
-      const imageUrl = req.protocol + '://' + req.get('host') + '/' + img;
+      // const localIpAddress = '127.0.0.1:27017'; 
+      // const port = '3000'
+      // const imageUrl = req.protocol + '://' + localIpAddress  + '/' + img;
+      const imageUrl = img;
+      console.log("HOST-------------------->",req.get('host'));
+      console.log("IMG------------->",img);
+
+      // const imageUrl = req.file.filename;
+
       savedJob = await newJob;
       savedJob.img = imageUrl;
       await savedJob.save()
