@@ -239,6 +239,11 @@ exports.experience = async (req, res,next) => {
 
     const user = await User.findById(id);
 
+    const existingDetails = await user.experience.find(( detail) => detail.position)
+    if(existingDetails){
+      return res.json({message : "Experience details already existed"})
+    }
+
     const newExperience = {
       company,
       position,
@@ -288,6 +293,12 @@ exports.education = async (req, res,next) => {
 
     const user = await User.findById(id);
 
+    const existingDetails = await user.education.find((detail) => detail.degree)
+
+    if(existingDetails){
+      return res.json({message : "Education details already existed"})
+    }
+
     const newEducation = {
       degree,
       startDate,
@@ -336,38 +347,39 @@ exports.personalDetails = async (req, res, next) => {
 
     const user = await User.findById(id);
 
+    // Check if user already has the same personal details
+    const existingDetails = user.personalDetails.find(detail =>
+      detail.name === name && detail.skill === skill
+    );
+
+    if (existingDetails) {
+      return res.status(400).json({ message: "Personal details already exist" });
+    }
+
     const newPersonalDetails = {
       name,
       skill,
       picture: null,
     };
 
-    if (req.file) {
-      if (
-        req.file.mimetype === "image/jpeg" ||
-        req.file.mimetype === "image/png"
-      ) {
-        newPersonalDetails.picture = req.file.filename;
-
-        // Generate the URL for the uploaded image
-        const imageUrl = 'uploads/' + req.file.filename;
-        newPersonalDetails.picture = imageUrl;
-        // console.log("--------------->",newPersonalDetails);
-      } else {
-        throw new Error("Only JPEG and PNG images are accepted");
-      }
+    if (req.file && (req.file.mimetype === "image/jpeg" || req.file.mimetype === "image/png")) {
+      const imageUrl = 'uploads/' + req.file.filename;
+      newPersonalDetails.picture = imageUrl;
+    } else if (req.file) {
+      throw new Error("Only JPEG and PNG images are accepted");
     }
-    user.personalDetails.push(newPersonalDetails);
 
+    user.personalDetails.push(newPersonalDetails);
     await user.save();
 
-    return res.status(201).json({ user: user, message: "Personal Details added successfully" });
+    return res.status(201).json({ user, message: "Personal Details added successfully" });
   } catch (error) {
     console.error(error);
-    // console.log("---------------------->",error);
     return next(error);
   }
 };
+
+
 
 
 //UPDATE PERSONAL DETAILS
@@ -406,6 +418,13 @@ exports.resumeDetails = async (req, res,next) => {
 
     // Find the user by userId
     const user = await User.findById(id);
+
+
+    const existingDetails = await user.resumeDetails.find((detail) => detail.resume && detail.portfolio)
+
+    if(existingDetails){
+      return res.json({message : "Resume details already existed"})
+    }
 
     // Create a new PersonalDetails document
     const newResumeDetails = {
