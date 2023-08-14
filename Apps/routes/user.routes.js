@@ -1,6 +1,7 @@
 const express = require('express')
 const router = express.Router()
 const controller = require('../controllers/user.controller')
+const resumeController = require('../controllers/resume-analyzer')
 const authMiddleware = require('../middleware/authMiddleware')
 const admin =  require('../middleware/admin')
 const { upload } = require('../utils/multerConfig')
@@ -29,7 +30,7 @@ router.put('/updateResumeDetails' , [authMiddleware] ,upload.fields([
     { name: 'portfolio', maxCount: 5 }
   ]),  controller.updateResumeDetails)
 router.get('/limitedDetails' , [authMiddleware] ,upload.single('resume'),  controller.getLimitedUserDetails)
-
+router.post('/resumeAnalyzer', [authMiddleware],upload.single('resume'),  resumeController.resumeanalyzer)
 
 
 

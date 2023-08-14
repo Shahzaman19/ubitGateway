@@ -12,6 +12,8 @@ const path = require("path");
 const morgan = require("morgan");
 const helmet = require('helmet')
 const port = process.env.PORT || 4000;
+global.appRoot = path.resolve(__dirname);
+
 
 // Set up MongoDB session store
 const store = new MongoDBStore({
@@ -59,7 +61,7 @@ app.use("/api", require("./Apps/routes/app.routes"));
 
 
 app.use((err, req, res, next) => {
-  console.log("Error------------>",err);
+  // console.log("Error------------>",err);
   res.status(err.status || 500);
   return res.json({
     message: err.message,
