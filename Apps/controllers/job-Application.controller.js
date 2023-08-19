@@ -24,9 +24,9 @@ exports.post = async (req,res,next ) => {
 // Count Users Applied for a Job
 exports.getJobApplicationCount = async (req, res,next) => {
   try {
-    const jobId = req.query.jobId;
+    const {jobId} = req.query;
 
-    const appliedUsersCount = await JobApplication.countDocuments({ jobId: jobId });
+    const appliedUsersCount = await JobApplication.countDocuments(jobId);
 
     return res.json({ appliedUsersCount });
   } catch (error) {
