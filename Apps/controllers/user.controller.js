@@ -214,22 +214,7 @@ exports.delete = async (req, res,next) => {
   }
 };
 
-//change Status
-// exports.changeStatus = async (req, res,next) => {
-//   let user = await User.findOne({ email: req.body.email });
-//   if (!user) {
-//     return  res.status(400).json({ error: "Invalid email" });
-//   }
 
-//   if (req.body.is_Active) {
-//     user.is_Active = true;
-//     await user.save();
-//   }
-
-//   if (!user.is_Active) {
-//     return  res.status(400).json({ message: "User is not active" });
-//   }
-// };
 
 //POST USER EXPERIENCE
 exports.experience = async (req, res,next) => {
@@ -459,10 +444,10 @@ exports.resumeDetails = async (req, res,next) => {
 
 
 
-
+//Update User Resume Details
 exports.updateResumeDetails = async (req, res, next) => {
   const id = req.user.userId;
-  // const { portfolio } = req.body;
+  const { portfolio } = req.body;
 
   try {
     if (!req.files || !req.files.resume || req.files.resume[0].mimetype !== "application/pdf") {
@@ -475,7 +460,7 @@ exports.updateResumeDetails = async (req, res, next) => {
       { _id: id },
       {
         $set: {
-          "resumeDetails.0.portfolio": req.files.portfolio[0].filename,
+          "resumeDetails.0.portfolio": portfolio,
           "resumeDetails.0.resume": req.files.resume[0].filename
         },
       },
