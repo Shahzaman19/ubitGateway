@@ -10,7 +10,7 @@ const session = require("express-session");
 const MongoDBStore = require("connect-mongodb-session")(session);
 const path = require("path");
 const morgan = require("morgan");
-const helmet = require('helmet')
+const helmet = require("helmet");
 const port = process.env.PORT || 4000;
 
 // Set up MongoDB session store
@@ -25,7 +25,7 @@ store.on("error", (error) => {
 
 app.use(morgan("dev"));
 app.use(express.json());
-app.use(helmet())
+app.use(helmet());
 
 app.use(
   session({
@@ -57,9 +57,7 @@ app.use("/api", require("./Apps/routes/app.routes"));
 
 //ERRORS
 
-
 app.use((err, req, res, next) => {
-  console.log("Error------------>",err);
   res.status(err.status || 500);
   return res.json({
     message: err.message,

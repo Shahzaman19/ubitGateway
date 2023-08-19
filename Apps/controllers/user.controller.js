@@ -5,7 +5,7 @@ const _ = require("lodash");
 const { generateOTP } = require("../utils/otp");
 
 //GET USER
-exports.get = async (req, res,next) => {
+exports.get = async (req, res, next) => {
   try {
     const users = await User.find().select("-password");
     return res.json({ users: users });
@@ -15,7 +15,7 @@ exports.get = async (req, res,next) => {
 };
 
 //GET A SINGLE USER
-exports.getSingleUser = async (req, res,next) => {
+exports.getSingleUser = async (req, res, next) => {
   try {
     const id = req.user.userId;
     const user = await User.findById(id).select("-password");
@@ -26,14 +26,14 @@ exports.getSingleUser = async (req, res,next) => {
       return res.status(404).json({ error: "User not found" });
     }
   } catch (error) {
-    return next (error)
+    return next(error);
   }
 };
 
 //CREATE USER AND GENERATE OTP
-exports.create = async (req, res,next) => {
+exports.create = async (req, res, next) => {
   const { error } = schema.validate(req.body);
-  if (error) return  res.status(404).json(error.details[0].message);
+  if (error) return res.status(404).json(error.details[0].message);
 
   let user = await User.findOne({ email: req.body.email });
   if (user)
@@ -47,8 +47,8 @@ exports.create = async (req, res,next) => {
   password = await bcrypt.hash(password, salt);
 
   try {
-    const otpCode = await generateOTP(email); 
-    req.session.otpCode = otpCode
+    const otpCode = await generateOTP(email);
+    req.session.otpCode = otpCode;
     req.session.userDetails = {
       name,
       email,
@@ -63,7 +63,7 @@ exports.create = async (req, res,next) => {
 };
 
 //LOGIN
-exports.login = async (req, res,next) => {
+exports.login = async (req, res, next) => {
   try {
     const user = await User.findOne({ email: req.body.email });
     if (!user) res.status(403).json({ error: "Email not found" });
@@ -82,7 +82,7 @@ exports.login = async (req, res,next) => {
         message: "Login Successfully",
       });
     } else {
-      return  res.status(400).json({ error: "INVALID PASSWORD" });
+      return res.status(400).json({ error: "INVALID PASSWORD" });
     }
   } catch (error) {
     return next(error);
@@ -90,10 +90,10 @@ exports.login = async (req, res,next) => {
 };
 
 //FORGET PASSWORD
-exports.forgetPassword = async (req, res,next) => {
+exports.forgetPassword = async (req, res, next) => {
   try {
     const user = await User.findOne({ email: req.body.email });
-    if (!user) return  res.status(403).send({ error: "Email not found" });
+    if (!user) return res.status(403).send({ error: "Email not found" });
 
     const { email } = req.body;
     const otpCode = await generateOTP(email);
@@ -102,37 +102,37 @@ exports.forgetPassword = async (req, res,next) => {
     req.session.userDetails = { email };
     return res.json({ message: "Email sent for OTP verification" });
   } catch (error) {
-   return next(error);
+    return next(error);
   }
 };
 
 //VERIFICATION OTP FOR RESET PASSWORD
-exports.verification = async (req, res,next) => {
-try {
-  const userOtp = req.body.otp;
-  const storedOtp = req.session.otpCode;
+exports.verification = async (req, res, next) => {
+  try {
+    const userOtp = req.body.otp;
+    const storedOtp = req.session.otpCode;
 
-  if (!userOtp) {
-    return res.status(400).send({ error: "OTP is required" });
-  } else if (userOtp === storedOtp) {
-    req.session.otpCode = null;
-    return res.status(200).send({ message: "OTP verification successful" });
-  } else {
-    return res.status(400).send({ error: "Invalid OTP" });
+    if (!userOtp) {
+      return res.status(400).send({ error: "OTP is required" });
+    } else if (userOtp === storedOtp) {
+      req.session.otpCode = null;
+      return res.status(200).send({ message: "OTP verification successful" });
+    } else {
+      return res.status(400).send({ error: "Invalid OTP" });
+    }
+  } catch (error) {
+    return next(error);
   }
-} catch (error) {
-  return next(error)
-}
 };
 
 //RESET PASSWORD
-exports.resetPassword = async (req, res,next) => {
+exports.resetPassword = async (req, res, next) => {
   const password = req.body.password;
   const confirmPassword = req.body.confirmPassword;
   const userDetails = req.session.userDetails;
 
   if (password !== confirmPassword) {
-    return  res.status(400).json({ error: "Passwords do not match" });
+    return res.status(400).json({ error: "Passwords do not match" });
   }
 
   try {
@@ -149,18 +149,18 @@ exports.resetPassword = async (req, res,next) => {
 
     return res.status(200).json({ message: "Password updated successfully" });
   } catch (error) {
-    return next(error)
+    return next(error);
   }
 };
 
 //VERIFY OTP AND  CREATE STORE USER IN DB
-exports.verifyOtp = async (req, res,next) => {
-  const userOtp =  req.body.userotp;
+exports.verifyOtp = async (req, res, next) => {
+  const userOtp = req.body.userotp;
 
   const storedOtp = req.session.otpCode;
   const userDetails = req.session.userDetails;
-  console.log('storedOtp------------------------->', storedOtp)
-  console.log('userOtp------------------------->', userOtp)
+  console.log("storedOtp------------------------->", storedOtp);
+  console.log("userOtp------------------------->", userOtp);
 
   // console.log('userDetails------------------------->', userDetails)
 
@@ -189,7 +189,7 @@ exports.edit = async (req, res, next) => {
   try {
     const user = await User.findByIdAndUpdate(id, req.body, { new: true });
     if (!user) {
-      return res.status(404).json({ message: 'User not found' });
+      return res.status(404).json({ message: "User not found" });
     }
     return res.json({ user: user });
   } catch (error) {
@@ -198,15 +198,15 @@ exports.edit = async (req, res, next) => {
 };
 
 //DELETE USER
-exports.delete = async (req, res,next) => {
+exports.delete = async (req, res, next) => {
   try {
     const id = req.query.id;
     if (!id) {
-      return  res.status(400).json({ error: "User Id is required" });
+      return res.status(400).json({ error: "User Id is required" });
     }
     const user = await User.findByIdAndDelete(id);
     if (!user) {
-      return  res.status(404).json({ error: "User not found" });
+      return res.status(404).json({ error: "User not found" });
     }
     return res.status(200).json({ message: "Deleted Successfully" });
   } catch (error) {
@@ -214,34 +214,19 @@ exports.delete = async (req, res,next) => {
   }
 };
 
-//change Status
-// exports.changeStatus = async (req, res,next) => {
-//   let user = await User.findOne({ email: req.body.email });
-//   if (!user) {
-//     return  res.status(400).json({ error: "Invalid email" });
-//   }
-
-//   if (req.body.is_Active) {
-//     user.is_Active = true;
-//     await user.save();
-//   }
-
-//   if (!user.is_Active) {
-//     return  res.status(400).json({ message: "User is not active" });
-//   }
-// };
-
 //POST USER EXPERIENCE
-exports.experience = async (req, res,next) => {
+exports.experience = async (req, res, next) => {
   try {
     const id = req.user.userId;
     const { position, company, startDate, endDate } = req.body;
 
     const user = await User.findById(id);
 
-    const existingDetails = await user.experience.find(( detail) => detail.position)
-    if(existingDetails){
-      return res.json({message : "Experience details already existed"})
+    const existingDetails = await user.experience.find(
+      (detail) => detail.position
+    );
+    if (existingDetails) {
+      return res.json({ message: "Experience details already existed" });
     }
 
     const newExperience = {
@@ -254,19 +239,21 @@ exports.experience = async (req, res,next) => {
     user.experience.push(newExperience);
     await user.save();
 
-    return res.status(201).json({ message: "User Experience added successfully" });
+    return res
+      .status(201)
+      .json({ message: "User Experience added successfully" });
   } catch (error) {
     return next(error);
   }
 };
 
 //UPDATE EXPERIENCE
-exports.updateExperience = async (req, res,next) => {
+exports.updateExperience = async (req, res, next) => {
   const id = req.user.userId;
   const { position, company, startDate, endDate } = req.body;
 
   try {
-     await User.findOneAndUpdate(
+    await User.findOneAndUpdate(
       { _id: id, "experience.position": { $exists: true } },
       {
         $set: {
@@ -279,24 +266,26 @@ exports.updateExperience = async (req, res,next) => {
       { new: true }
     );
 
-    return res.json({message : "Experience updated successfully"});
+    return res.json({ message: "Experience updated successfully" });
   } catch (error) {
     return next(error);
   }
 };
 
 //POST USER EDUCATION
-exports.education = async (req, res,next) => {
+exports.education = async (req, res, next) => {
   try {
     const id = req.user.userId;
     const { degree, startDate, endDate } = req.body;
 
     const user = await User.findById(id);
 
-    const existingDetails = await user.education.find((detail) => detail.degree)
+    const existingDetails = await user.education.find(
+      (detail) => detail.degree
+    );
 
-    if(existingDetails){
-      return res.json({message : "Education details already existed"})
+    if (existingDetails) {
+      return res.json({ message: "Education details already existed" });
     }
 
     const newEducation = {
@@ -316,7 +305,7 @@ exports.education = async (req, res,next) => {
 };
 
 //UPDATE EDUCATION
-exports.updateEducation = async (req, res,next) => {
+exports.updateEducation = async (req, res, next) => {
   const id = req.user.userId;
   const { degree, startDate, endDate } = req.body;
 
@@ -333,7 +322,7 @@ exports.updateEducation = async (req, res,next) => {
       { new: true }
     );
 
-    return res.json({message : "Education updated successfully"});
+    return res.json({ message: "Education updated successfully" });
   } catch (error) {
     return next(error);
   }
@@ -348,12 +337,14 @@ exports.personalDetails = async (req, res, next) => {
     const user = await User.findById(id);
 
     // Check if user already has the same personal details
-    const existingDetails = user.personalDetails.find(detail =>
-      detail.name === name && detail.skill === skill
+    const existingDetails = user.personalDetails.find(
+      (detail) => detail.name === name && detail.skill === skill
     );
 
     if (existingDetails) {
-      return res.status(400).json({ message: "Personal details already exist" });
+      return res
+        .status(400)
+        .json({ message: "Personal details already exist" });
     }
 
     const newPersonalDetails = {
@@ -362,8 +353,11 @@ exports.personalDetails = async (req, res, next) => {
       picture: null,
     };
 
-    if (req.file && (req.file.mimetype === "image/jpeg" || req.file.mimetype === "image/png")) {
-      const imageUrl = 'uploads/' + req.file.filename;
+    if (
+      req.file &&
+      (req.file.mimetype === "image/jpeg" || req.file.mimetype === "image/png")
+    ) {
+      const imageUrl = "uploads/" + req.file.filename;
       newPersonalDetails.picture = imageUrl;
     } else if (req.file) {
       throw new Error("Only JPEG and PNG images are accepted");
@@ -372,18 +366,17 @@ exports.personalDetails = async (req, res, next) => {
     user.personalDetails.push(newPersonalDetails);
     await user.save();
 
-    return res.status(201).json({ user, message: "Personal Details added successfully" });
+    return res
+      .status(201)
+      .json({ user, message: "Personal Details added successfully" });
   } catch (error) {
     console.error(error);
     return next(error);
   }
 };
 
-
-
-
 //UPDATE PERSONAL DETAILS
-exports.updatePersonalDetails = async (req, res,next) => {
+exports.updatePersonalDetails = async (req, res, next) => {
   const id = req.user.userId;
   const { name, skill } = req.body;
 
@@ -401,98 +394,75 @@ exports.updatePersonalDetails = async (req, res,next) => {
     );
 
     if (!user) {
-      return  res.status(404).json({ error: "User not found" });
+      return res.status(404).json({ error: "User not found" });
     }
 
-    return res.json({message : "User updated successfuly"});
+    return res.json({ message: "User updated successfuly" });
   } catch (error) {
     return next(error);
   }
 };
 
 //POST USER RESUME
-exports.resumeDetails = async (req, res,next) => {
+exports.resumeDetails = async (req, res, next) => {
   try {
     const id = req.user.userId;
-    const { portfolio} = req.body;
-
-    // Find the user by userId
     const user = await User.findById(id);
 
+    const existingDetails = await user.resumeDetails.find(
+      (detail) => detail.resume && detail.portfolio
+    );
 
-    const existingDetails = await user.resumeDetails.find((detail) => detail.resume && detail.portfolio)
-
-    if(existingDetails){
-      return res.json({message : "Resume details already existed"})
+    if (existingDetails) {
+      return res.json({ message: "Resume details already existed" });
     }
 
-    // Create a new PersonalDetails document
     const newResumeDetails = {
       resume: null,
-      portfolio,
+      portfolio: null,
     };
 
-    const imageUrl = 'uploads/' + req.file.filename;
-    if (req.file) {
-      if (req.file.mimetype === "application/pdf") {
+    if (req.files["resume"]) {
+      const resumeFile = req.files["resume"][0];
+      if (resumeFile.mimetype === "application/pdf") {
+        const imageUrl = "uploads/" + resumeFile.filename;
         newResumeDetails.resume = imageUrl;
-        
       } else {
-        throw new Error({
-          error: "Only PDF files are accepted for the resume",
-        });
+        throw new Error("Only PDF files are accepted for the resume");
       }
     }
 
-    // Add the new PersonalDetails to the user's personalDetails array
+    if (req.files["portfolio"]) {
+      const portfolioFile = req.files["portfolio"][0];
+      const imageUrl = "uploads/" + portfolioFile.filename;
+      newResumeDetails.portfolio = imageUrl;
+    }
+
     user.resumeDetails.push(newResumeDetails);
 
     await user.save();
 
-    return res.status(201).json({ user : newResumeDetails,message: "Resume Details added successfully" });
+    return res
+      .status(201)
+      .json({
+        user: newResumeDetails,
+        message: "Resume Details added successfully",
+      });
   } catch (error) {
     return next(error);
   }
 };
-
-//UPDATE RESUME DETAILS
-// exports.updateResumeDetails = async (req, res,next) => {
-//   const id = req.user.userId;
-//   // const { portfolio } = req.body;
-//   console.log("REQ BODY ----------->",req.files);
-//   try {
-//     if (req.file && req.file.mimetype !== "application/pdf") {
-//       return res
-//         .status(400)
-//         .json({ error: "Only PDF files are accepted for the picture" });
-//     }
-
-//     const user = await User.findOneAndUpdate(
-//       { _id: id, "resumeDetails.portfolio": { $exists: true } },
-//       {
-//         $set: {
-//           "resumeDetails.$.portfolio": req.file ? req.file.filename : null,
-//           "resumeDetails.$.resume": req.file ? req.file.filename : null,
-//         },
-//       },
-//       { new: true }
-//     );
-
-//     if (!user) {
-//       return  res.status(404).json({ error: "User not found" });
-//     }
-//     return res.json({message : "Resume details updated successfully"});
-//   } catch (error) {
-//     return next(error);
-//   }
-// };
 
 exports.updateResumeDetails = async (req, res, next) => {
   const id = req.user.userId;
   // const { portfolio } = req.body;
 
   try {
-    if (!req.files || !req.files.resume || req.files.resume[0].mimetype !== "application/pdf") {
+    if (
+      !req.files ||
+      !req.files.resume ||
+      req.files.resume[0].mimetype !== "application/pdf"
+    ) {
       return res
         .status(400)
         .json({ error: "Please upload a PDF file for the resume" });
@@ -503,7 +473,7 @@ exports.updateResumeDetails = async (req, res, next) => {
       {
         $set: {
           "resumeDetails.0.portfolio": req.files.portfolio[0].filename,
-          "resumeDetails.0.resume": req.files.resume[0].filename
+          "resumeDetails.0.resume": req.files.resume[0].filename,
         },
       },
       { new: true }
@@ -519,12 +489,8 @@ exports.updateResumeDetails = async (req, res, next) => {
   }
 };
 
-
-
-
-
 //USER LIMITED DETAILS
-exports.getLimitedUserDetails = async (req, res,next) => {
+exports.getLimitedUserDetails = async (req, res, next) => {
   try {
     // Fetch the limited user details from the database
     const users = await User.find(
