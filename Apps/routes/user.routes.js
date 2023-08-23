@@ -31,6 +31,7 @@ router.put('/updateResumeDetails' , [authMiddleware] ,upload.fields([
   ]),  controller.updateResumeDetails)
 router.get('/limitedDetails' , [authMiddleware] ,upload.single('resume'),  controller.getLimitedUserDetails)
 router.post('/resumeAnalyzer', [authMiddleware],upload.single('resume'),  resumeController.resumeanalyzer)
+router.get('/resumeFeedback', [authMiddleware], resumeController.getResumeFeedback)
 
 
 

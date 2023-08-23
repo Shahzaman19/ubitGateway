@@ -23,6 +23,7 @@ const personalDetailsSchema = new Schema({
 
 const resumeSchema = new Schema({
   resume: String,
+  feedback: String,
   portfolio: String,
 });
 

@@ -27,7 +27,6 @@ exports.getJobApplicationCount = async (req, res,next) => {
     const jobId = req.query.jobId;
 
     const appliedUsersCount = await JobApplication.countDocuments({ jobId: jobId });
-
     return res.json({ appliedUsersCount });
   } catch (error) {
     return next(error);

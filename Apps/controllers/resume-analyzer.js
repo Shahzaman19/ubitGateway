@@ -23,18 +23,15 @@ exports.resumeanalyzer = async (req, res, next) => {
             });
           }
 
-          console.log("Resume COntent --------------->",data);
         })
           
 
-        const apiKey = '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';
+        const apiKey = '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';
         const apiUrl = 'https://api.openai.com/v1/engines/davinci/completions';
 
         const response = await axios.post(
           apiUrl,
           {
-            // prompt: `Please review this resume and provide feedback on its weakness and areas for improvement:\n\n${resumeContent}`,
-            // prompt: `We would appreciate your feedback on areas where this resume can be improved:\n\n${resumeContent}`,
             prompt : req.body.prompt,
             max_tokens: 1000,
             
@@ -53,10 +50,7 @@ exports.resumeanalyzer = async (req, res, next) => {
         user.resumeDetails.push(newResumeDetails);
 
         await user.save();
-
-        return res.status(201).json({
-          user: newResumeDetails,
-        });
+        return res.status(201).json(newResumeDetails);
       } else {
         throw new Error({
           error: 'Only PDF files are accepted for the resume',
@@ -67,3 +61,19 @@ exports.resumeanalyzer = async (req, res, next) => {
     return next(error);
   }
 };
+
+
+exports.getResumeFeedback = async(req,res,next) => {
+  try {
+        const id = req.user.userId;
+        const user = await User.findById(id);
+        console.log("userID----------->",user);
+       const result =  user.resumeDetails.map((item) => {
+          return item.feedback
+       })
+       return res.status(200).json({"feedback" : result})
+
+  } catch (error) {
+    return next(error)
+  }
+}
