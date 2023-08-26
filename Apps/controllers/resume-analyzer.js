@@ -26,7 +26,7 @@ exports.resumeanalyzer = async (req, res, next) => {
         })
           
 
-        const apiKey = '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';
+        const apiKey = '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';
         const apiUrl = 'https://api.openai.com/v1/engines/davinci/completions';
 
         const response = await axios.post(
