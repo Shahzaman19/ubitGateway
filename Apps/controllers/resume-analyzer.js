@@ -1,7 +1,7 @@
 /* eslint-disable no-undef */
-const fs = require('fs');
-const axios = require('axios');
-const {User} = require('../model/user')
+const fs = require("fs");
+const axios = require("axios");
+const { User } = require("../model/user");
 
 exports.resumeanalyzer = async (req, res, next) => {
   try {
@@ -11,21 +11,19 @@ exports.resumeanalyzer = async (req, res, next) => {
       resume: null,
     };
 
-    const imageUrl ='uploads/' + req.file.filename;
+    const imageUrl = "uploads/" + req.file.filename;
     if (req.file) {
-      if (req.file.mimetype === 'application/pdf') {
+      if (req.file.mimetype === "application/pdf") {
         newResumeDetails.resume = imageUrl;
 
-        const myPath = global.appRoot + '/' + imageUrl
-        fs.readFile(myPath, 'utf8',(err,data) => {
+        const myPath = global.appRoot + "/" + imageUrl;
+        fs.readFile(myPath, "utf8", (err, data) => {
           if (err) {
             throw new Error({
-              error: 'Error reading file',
+              error: "Error reading file",
             });
           }
-
-        })
-          
+        });
 
         const apiKey = process.env.apiKey;
         const apiUrl = process.env.apiUrl;
@@ -33,14 +31,13 @@ exports.resumeanalyzer = async (req, res, next) => {
         const response = await axios.post(
           apiUrl,
           {
-            prompt : req.body.prompt,
+            prompt: req.body.prompt,
             max_tokens: 1000,
-            
           },
           {
             headers: {
               Authorization: `Bearer ${apiKey}`,
-              'Content-Type': 'application/json',
+              "Content-Type": "application/json",
             },
           }
         );
@@ -54,7 +51,7 @@ exports.resumeanalyzer = async (req, res, next) => {
         return res.status(201).json(newResumeDetails);
       } else {
         throw new Error({
-          error: 'Only PDF files are accepted for the resume',
+          error: "Only PDF files are accepted for the resume",
         });
       }
     }
@@ -63,18 +60,16 @@ exports.resumeanalyzer = async (req, res, next) => {
   }
 };
 
-
-exports.getResumeFeedback = async(req,res,next) => {
+exports.getResumeFeedback = async (req, res, next) => {
   try {
-        const id = req.user.userId;
-        const user = await User.findById(id);
-        console.log("userID----------->",user);
-       const result =  user.resumeDetails.map((item) => {
-          return item.feedback
-       })
-       return res.status(200).json({"feedback" : result})
-
+    const id = req.user.userId;
+    const user = await User.findById(id);
+    console.log("userID----------->", user);
+    const result = user.resumeDetails.map((item) => {
+      return item.feedback;
+    });
+    return res.status(200).json({ feedback: result });
   } catch (error) {
-    return next(error)
+    return next(error);
   }
-}
+};
