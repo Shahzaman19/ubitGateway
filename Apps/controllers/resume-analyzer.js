@@ -1,3 +1,4 @@
+/* eslint-disable no-undef */
 const fs = require('fs');
 const axios = require('axios');
 const {User} = require('../model/user')
@@ -26,8 +27,8 @@ exports.resumeanalyzer = async (req, res, next) => {
         })
           
 
-        const apiKey = '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';
-        const apiUrl = 'https://api.openai.com/v1/engines/davinci/completions';
+        const apiKey = process.env.apiKey;
+        const apiUrl = process.env.apiUrl;
 
         const response = await axios.post(
           apiUrl,
