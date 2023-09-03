@@ -2,8 +2,8 @@ const mongoose = require("mongoose");
 const { Schema } = mongoose;
 
 const jobApplicationSchema = new Schema({
-  userId: { type: Schema.Types.ObjectId, ref: 'User' },
-  jobId: { type: Schema.Types.ObjectId, ref: 'Job' },
+  userId: { type: mongoose.Schema.Types.ObjectId, ref: 'Users' },
+  jobId: { type: mongoose.Schema.Types.ObjectId, ref: 'Job' },
   resume: String,
   portfolioLink: String,
   coverLetter: String,

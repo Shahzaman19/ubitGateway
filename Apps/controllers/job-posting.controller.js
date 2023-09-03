@@ -1,12 +1,24 @@
 const { Job, schema } = require("../model/job-posting");
+const {User} = require("../model/user")
 
 //JOB POSTING
 exports.jobPost = async (req, res,next) => {
   try {
+    const user = await User.findOne({role : 'employer'})
+    if(user.role === "employer"){
+      console.log("USER ROLE -------------->",user.role);
+    }
+    else{
+       return res.status(400).json({error : "The user should be employer to post the job"})
+    }
+
     const { error } = schema.validate(req.body);
     if (error) return  res.status(400).json(error.details[0].message);
 
-    const newJob = new Job(req.body);
+    const newJob = new Job({
+      ...req.body,
+      employerEmail: user.email, // Add the employer's email to the job document
+    });
 
     let img;
     if (req.file) {
@@ -20,8 +32,8 @@ exports.jobPost = async (req, res,next) => {
       savedJob = await newJob;
       savedJob.img = imageUrl;
       await savedJob.save()
-      console.log("savedjob------------>",savedJob);
-      return res.status(201).json(savedJob);
+      return res.status(201).json({ savedJob});
+
     } catch (error) {
       res
         .status(500)
@@ -31,6 +43,10 @@ exports.jobPost = async (req, res,next) => {
     return next(error);
   }
 };
+
+
+
+
 //GET ALL JOB POSTS
 exports.getJobPosts = async (req, res,next) => {
   try {

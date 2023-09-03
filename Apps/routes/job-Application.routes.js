@@ -6,6 +6,10 @@ const { upload } =  require('../utils/multerConfig')
 
 router.post('/application', [authMiddleware], upload.single('resume'), controller.post);
 router.get('/application/count' , [authMiddleware] ,controller.getJobApplicationCount);
+router.get('/getAllJobs' , [authMiddleware] ,controller.getAllJobs);
+router.get('/getJobApplicants' , [authMiddleware] ,controller.getJobApplicants);
+
+
 
 
 module.exports = router;

@@ -7,6 +7,9 @@ const jobSchema = new Schema({
     type : String,
     required : true,
   },
+  employerEmail : {
+    type : String,
+  },
   location: {
     type : String,
     required : true,

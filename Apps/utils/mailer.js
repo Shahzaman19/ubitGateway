@@ -18,7 +18,7 @@ const transporter = nodemailer.createTransport({
             text,
           };
   const info = await transporter.sendMail(mailOptions);
-  console.log(info);
+  // console.log(info);
 
     } 
     catch 
