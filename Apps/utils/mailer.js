@@ -1,3 +1,4 @@
+/* eslint-disable no-undef */
 const nodemailer = require('nodemailer')
 
  // Send a reset password email to the user
@@ -17,11 +18,12 @@ const transporter = nodemailer.createTransport({
             text,
           };
   const info = await transporter.sendMail(mailOptions);
+  // console.log(info);
 
     } 
     catch 
     (error) {
-        res.send(error.message)
+        return res.json(error.message)
     }
   
 

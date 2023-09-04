@@ -16,4 +16,4 @@ async function generateOTP(email) {
   return otpCode;
 }
 
-module.exports = { generateOTP };
+module.exports = { generateOTP};

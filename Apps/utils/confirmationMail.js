@@ -1,3 +1,4 @@
+/* eslint-disable no-undef */
 const nodemailer = require('nodemailer')
 const {User } = require('../model/user')
 
