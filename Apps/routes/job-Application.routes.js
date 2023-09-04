@@ -8,6 +8,8 @@ router.post('/application', [authMiddleware], upload.single('resume'), controlle
 router.get('/application/count' , [authMiddleware] ,controller.getJobApplicationCount);
 router.get('/getAllJobs' , [authMiddleware] ,controller.getAllJobs);
 router.get('/getJobApplicants' , [authMiddleware] ,controller.getJobApplicants);
+router.get('/getJobDetails'  ,controller.getJobDetails);
+
 
 
 

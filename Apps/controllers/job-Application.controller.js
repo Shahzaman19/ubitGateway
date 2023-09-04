@@ -67,6 +67,7 @@ exports.getJobApplicationCount = async (req, res,next) => {
   }
 };
 
+//GET USER WHO HAVE APPLIED FOR A JOB
 exports.getJobApplicants = async (req, res, next) => {
     try {
       const { jobId } = req.query;
@@ -75,14 +76,11 @@ exports.getJobApplicants = async (req, res, next) => {
         return res.status(400).json({ error: 'jobId is required in the query parameters' });
       }
   
-      // Query the JobApplication collection to find applications for the specific job
       const jobApplications = await JobApplication.find({ jobId });
   
-      // Extract user IDs from the job applications
       const userIds = jobApplications.map((application) => application.userId);
       console.log("userId ---------->",userIds);
   
-      // Find user details based on the user IDs
       const applicants = await User.find({ _id: { $in: userIds } });
       console.log("APplicants--------------->",applicants);
   
@@ -93,4 +91,31 @@ exports.getJobApplicants = async (req, res, next) => {
 }
 
 
+
+//GET JOB DETAILS BASEED ON JOBID
+exports.getJobDetails = async (req, res, next) => {
+  try {
+    const { jobId } = req.query;
+
+    if (!jobId) {
+      return res.status(400).json({ error: 'jobId is required in the query parameters' });
+    }
+
+    // Find the job details by jobId
+    const job = await Job.findById(jobId);
+
+    if (!job) {
+      return res.status(404).json({ error: 'Job not found.' });
+    }
+
+    const response = {
+      jobId: jobId, 
+      jobDetails: job,
+    };
+
+    return res.status(200).json(response);
+  } catch (error) {
+    return next(error);
+  }
+};
 
