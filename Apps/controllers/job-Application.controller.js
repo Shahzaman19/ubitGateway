@@ -45,15 +45,19 @@ exports.post = async (req, res, next) => {
 
 
 //GET ALL JOBS
-exports.getAllJobs = async(req,res,next) => {
+
+exports.getAllJobsByEmployer = async (req, res, next) => {
   try {
-    const {jobId} = req.query
-    const user = await Job.findById(jobId)
-    return res.status(200).json(user)
+    const { employerEmail } = req.query;
+
+    const jobs = await Job.find({ employerEmail });
+    console.log("------------------->",jobs);
+    return res.status(200).json(jobs);
   } catch (error) {
-    return next(error)
+    return next(error);
   }
-}
+};
+
 
 // Count Users Applied for a Job
 exports.getJobApplicationCount = async (req, res,next) => {

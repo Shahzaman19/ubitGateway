@@ -17,8 +17,10 @@ exports.jobPost = async (req, res,next) => {
 
     const newJob = new Job({
       ...req.body,
-      employerEmail: user.email, // Add the employer's email to the job document
+      employerEmail: user.email, 
+      userId : user._id
     });
+    console.log("user ID -------->",user._id);
 
     let img;
     if (req.file) {
@@ -32,7 +34,8 @@ exports.jobPost = async (req, res,next) => {
       savedJob = await newJob;
       savedJob.img = imageUrl;
       await savedJob.save()
-      return res.status(201).json({ savedJob});
+      console.log("savedJob---------->",savedJob);
+      return res.status(201).json({ savedJob,userId : user._id});
 
     } catch (error) {
       res
@@ -43,6 +46,8 @@ exports.jobPost = async (req, res,next) => {
     return next(error);
   }
 };
+
+
 
 
 

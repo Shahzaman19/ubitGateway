@@ -11,7 +11,7 @@ const MongoDBStore = require("connect-mongodb-session")(session);
 const path = require("path");
 const morgan = require("morgan");
 const helmet = require('helmet')
-const port = process.env.PORT || 3000;
+const port = process.env.PORT || 4000;
 global.appRoot = path.resolve(__dirname);
 
 
