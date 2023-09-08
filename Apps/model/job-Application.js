@@ -5,7 +5,7 @@ const jobApplicationSchema = new Schema({
   userId: { type: mongoose.Schema.Types.ObjectId, ref: 'Users' },
   jobId: { type: mongoose.Schema.Types.ObjectId, ref: 'Job' },
   resume: String,
-  portfolioLink: String,
+  portfolio: String,
   coverLetter: String,
   applicationDate: { type: Date, default: Date.now },
 });

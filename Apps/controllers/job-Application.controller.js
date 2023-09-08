@@ -83,12 +83,23 @@ exports.getJobApplicants = async (req, res, next) => {
       const jobApplications = await JobApplication.find({ jobId });
   
       const userIds = jobApplications.map((application) => application.userId);
-      console.log("userId ---------->",userIds);
   
       const applicants = await User.find({ _id: { $in: userIds } });
-      console.log("APplicants--------------->",applicants);
-  
-      return res.status(200).json(applicants);
+      console.log("Applicants------->>>",applicants);
+
+      const simplifiedApplicants = applicants.map((applicant) => {
+        const jobApplication = jobApplications.find((app) => app.userId.toString() === applicant._id.toString());
+        return {
+          name: applicant.name,
+          email: applicant.email,
+          coverLetter: jobApplication ? jobApplication.coverLetter : null,
+          portfolio: applicant.resumeDetails[0].portfolio,
+          resume: applicant.resumeDetails[0].resume,
+        };
+      });
+      
+      console.log("simplified------->>>",simplifiedApplicants);
+      return res.status(200).json(simplifiedApplicants);
   } catch (error) {
     return next(error)
   }
