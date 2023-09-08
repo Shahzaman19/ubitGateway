@@ -93,7 +93,7 @@ exports.getJobApplicants = async (req, res, next) => {
           name: applicant.name,
           email: applicant.email,
           coverLetter: jobApplication ? jobApplication.coverLetter : null,
-          portfolio: applicant.resumeDetails[0].portfolio,
+          // portfolio: applicant.resumeDetails[0].portfolio,
           resume: applicant.resumeDetails[0].resume,
         };
       });
