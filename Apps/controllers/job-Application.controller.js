@@ -90,11 +90,11 @@ exports.getJobApplicants = async (req, res, next) => {
       const simplifiedApplicants = applicants.map((applicant) => {
         const jobApplication = jobApplications.find((app) => app.userId.toString() === applicant._id.toString());
         return {
-          name: applicant.name,
-          email: applicant.email,
+          name: applicant?.name,
+          email: applicant?.email,
           coverLetter: jobApplication ? jobApplication.coverLetter : null,
           // portfolio: applicant.resumeDetails[0].portfolio,
-          resume: applicant.resumeDetails[0].resume,
+          resume: applicant?.resumeDetails[0]?.resume,
         };
       });
       
