@@ -72,39 +72,74 @@ exports.getJobApplicationCount = async (req, res,next) => {
 };
 
 //GET USER WHO HAVE APPLIED FOR A JOB
-exports.getJobApplicants = async (req, res, next) => {
-    try {
-      const { jobId } = req.query;
+// exports.getJobApplicants = async (req, res, next) => {
+//     try {
+//       const { jobId } = req.query;
   
-      if (!jobId) {
-        return res.status(400).json({ error: 'jobId is required in the query parameters' });
-      }
+//       if (!jobId) {
+//         return res.status(400).json({ error: 'jobId is required in the query parameters' });
+//       }
   
-      const jobApplications = await JobApplication.find({ jobId });
+//       const jobApplications = await JobApplication.find({ jobId });
   
-      const userIds = jobApplications.map((application) => application.userId);
+//       const userIds = jobApplications.map((application) => application.userId);
   
-      const applicants = await User.find({ _id: { $in: userIds } });
-      console.log("Applicants------->>>",applicants);
+//       const applicants = await User.find({ _id: { $in: userIds } });
+//       console.log("Applicants------->>>",applicants);
 
-      const simplifiedApplicants = applicants.map((applicant) => {
-        const jobApplication = jobApplications.find((app) => app.userId.toString() === applicant._id.toString());
-        return {
-          name: applicant?.name,
-          email: applicant?.email,
-          coverLetter: jobApplication ? jobApplication.coverLetter : null,
-          // portfolio: applicant.resumeDetails[0].portfolio,
-          resume: applicant?.resumeDetails[0]?.resume,
-        };
-      });
+//       const simplifiedApplicants = applicants.map((applicant) => {
+//         const jobApplication = jobApplications.find((app) => app.userId.toString() === applicant._id.toString());
+//         return {
+//           name: applicant?.name,
+//           email: applicant?.email,
+//           coverLetter: jobApplication ? jobApplication.coverLetter : null,
+//           // portfolio: applicant.resumeDetails[0].portfolio,
+//           resume: applicant?.resumeDetails[0]?.resume,
+//         };
+//       });
       
-      console.log("simplified------->>>",simplifiedApplicants);
-      return res.status(200).json(simplifiedApplicants);
-  } catch (error) {
-    return next(error)
-  }
-}
+//       console.log("simplified------->>>",simplifiedApplicants);
+//       return res.status(200).json(simplifiedApplicants);
+//   } catch (error) {
+//     return next(error)
+//   }
+// }
+exports.getJobApplicants = async (req, res, next) => {
+  try {
+    const { jobId } = req.query;
 
+    if (!jobId) {
+      return res
+        .status(400)
+        .json({ error: "jobId is required in the query parameters" });
+    }
+
+    const jobApplications = await JobApplication.find({ jobId }).populate(
+      "userId"
+    );
+    console.log("POPULATE----->", jobApplications);
+
+    const userIds = jobApplications.map((application) => application.userId);
+
+    const applicants = await User.find({ _id: { $in: userIds } });
+    console.log("Applicants------->>>",applicants);
+
+    const simplifiedApplicants = jobApplications.map((applicant) => {
+      return {
+        name: applicant.userId?.name,
+        email: applicant?.userId.email,
+        coverLetter: applicant.coverLetter,
+        portfolio: applicant.portfolio,
+        resume: applicant?.resume,
+      };
+    });
+
+    // console.log("simplified------->>>", applicants);
+    return res.status(200).json(simplifiedApplicants);
+  } catch (error) {
+    return next(error);
+  }
+};
 
 
 //GET JOB DETAILS BASEED ON JOBID
