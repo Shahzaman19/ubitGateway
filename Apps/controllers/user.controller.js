@@ -14,6 +14,16 @@ exports.get = async (req, res,next) => {
   }
 };
 
+//GET STUDENTS
+exports.getStudents = async (req, res,next) => {
+  try {
+    const users = await User.find({ role: 'student' }).select("-password");
+    return res.json({ users: users });
+  } catch (error) {
+    return next(error);
+  }
+};
+
 //GET A SINGLE USER
 exports.getSingleUser = async (req, res,next) => {
   try {
